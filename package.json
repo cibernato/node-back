@@ -1,0 +1,17 @@
+{
+  "name": "typescript-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "start": "node_modules/.bin/ts-node server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^10.5.5",
+    "ts-node": "^7.0.0",
+    "typescript": "^3.0.1"
+  }
+}
