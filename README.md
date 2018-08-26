@@ -207,3 +207,55 @@ Since we want to log any request not just the Get and Post requests to the end p
 ```TypeScript
 app.use(logRequest);
 ```
+
+### Strategies for Rendering Websites
+
+Basically, there are two different approaches, Server-side Rendering of HTML which is the traditional and still most common approach, and the more modern way of Client-side Rendering which is rapidly gain the importance recently and its driven by powerful client-side TypeScript/JavaScript frameworks such as angular or react.
+
+#### Server-side Rendering
+
+Server-side Rendering works as follows: HTML templates created with certain template engines are placed on the server. And the client request is answered by plugging additional data into these templates and sending the resulting html to the browser for display.
+
+There are various template engines available like jade or ejs. Here we will use ejs for a quick illustration.
+For that first install ejs by `npm install ejs -S`. Additionally, install types for ejs as a development dependency by `npm install @types/ejs -D`. ejs assumes that your templates are located in "views" folder. So, let's create the folder "views" under the root directory. In that folder, create a file "index.ejs", and open it to add some simple HTML.
+
+For rendering the ejs replace the "send" method by the "render" method in home route. The method render takes one required argument and two optional arguments. For now, we need the required parameter which is the name of the template file under the views folder.
+
+```TypeScript
+app.route("/").get((req, res, next) => {
+    // res.send("Home");
+    res.render("index.ejs");
+});
+```
+
+Now go to the browser and send a request to the [Home path](http://localhost:8091). In case of ejs, the template is just an extension of HTML. So, as in our example we can store pure HTML as an ejs template. Usually however we will have some dynamic elements on our website, for instance we could greet the user with "welcome" followed by the user's first name when the user is logged in. To demonstrate that, add an interface user above the home route with a firstname and a lastname.
+
+```TypeScript
+interface User {
+    firstname: string
+    lastname: string
+}
+```
+
+And create a constant "user" of type User with dummy User data.
+
+```TypeScript
+const user : User = {
+    firstname : "Robert",
+    lastname : "Jones"
+}
+```
+
+To inject this data into the template we use the second parameter of the "render" method. There we can add an object of key-value pairs of any type, so we could provide the user data under the key "user".
+
+```TypeScript
+app.route("/").get((req, res, next) => {
+    // res.send("Home");
+    res.render("index.ejs", {user: user});
+});
+```
+With that key we can get access to the user object within the template. In order to insert injected data in the ejs template, we have a special tag with a % sign followed by an = sign, within that tag add user.firstname to access the firstname of the user for the greeting.
+
+```HTML
+<h1>Welcome <%= user.firstname %>!</h1>
+```

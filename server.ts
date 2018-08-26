@@ -12,11 +12,22 @@ const logRequest : RequestHandler = (req, res, next) => {
 
 app.use(logRequest);
 
+interface User {
+    firstname: string
+    lastname: string
+}
+
+const user : User = {
+    firstname : "Robert",
+    lastname : "Jones"
+}
+
 /**
  * GET
  */
 app.route("/").get((req, res, next) => {
-    res.send("Home");
+    // res.send("Home");
+    res.render("index.ejs", {user: user});
 });
 
 app.route("/products").get((req, res, next) => {
