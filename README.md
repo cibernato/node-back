@@ -201,3 +201,9 @@ const logRequest : RequestHandler = (req, res, next) => {
     next();
 });
 ```
+
+Since we want to log any request not just the Get and Post requests to the end point "/products", we would need to add the logRequest handler in all the routes, which is obviously somewhat awkward. But fortunately, we don't need to do that, instead write app.use followed by the middleware function we want to use in all routes. Then logging should work for all routes.
+
+```TypeScript
+app.use(logRequest);
+```

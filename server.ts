@@ -10,6 +10,8 @@ const logRequest : RequestHandler = (req, res, next) => {
     next();
 };
 
+app.use(logRequest);
+
 /**
  * GET
  */
@@ -17,7 +19,7 @@ app.route("/").get((req, res, next) => {
     res.send("Home");
 });
 
-app.route("/products").get(logRequest, (req, res, next) => {
+app.route("/products").get((req, res, next) => {
     res.send("Get all products.");
 });
 
@@ -32,7 +34,7 @@ app.route("/products/:productID").get((req, res, next) => {
 /**
  * POST
  */
-app.route("/products").post(logRequest, urlParser, (req, res, next) => {
+app.route("/products").post(urlParser, (req, res, next) => {
     res.send("Post new product.");
     console.log(req.body);
 });
