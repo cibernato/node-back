@@ -145,3 +145,59 @@ app.route("/products/:productID").delete((req, res, next) => {
     res.send("Delete Product with ID: " + req.params.productID);
 });
 ```
+
+## Backend with Node/Express (II)
+
+While dealing with routing in part (I), we already got to know some of the fundamental concepts of express though we didn't make it explicit. Now In part (II) we take a closer look at these concepts, in particular, the Request-Response-Cycle and the Express Middleware pattern.
+
+After these foundations we briefly discuss two ways the server could respond to the client (Strategies for Rendering Websites). The first strategy: The server sends the final HTML ready to display (Server-side Rendering). the second Strategy: The server sends the pure data (Raw Data i.e. JSON, XML) and leave the responsibility for the presentation to the client (Client-side Rendering).
+
+In the second scenario, which becomes more and more popular, we need a common structure to exchange data. The JSON and XML formats are available for that. And since JSON is generally preferred in a JavaScript and TypeScript setting, we will show how to use JSON in express.
+
+Finally, we will see how to refactor the code for more structure so it remains readable and easily extensible.
+
+### The Request-Response-Cycle and the Express Middleware
+
+Express makes extensive use of what is called middleware functions. The bodyParser in our own custom request handler are examples of middleware functions.
+
+```TypeScript
+app.route("/products").post(urlParser, (req, res, next) => {
+    res.send("Post new product.");
+    /* Simply, log the content of request body to the console. */
+    console.log(req.body);
+});
+```
+
+Observe, by hovering over one of the routing methods that these methods accept a list of request handlers, i.e. middleware functions as input. Each middleware function has the same pattern, it has full access to the request as well as the response object and also may use the next function. The reason is that routing is not a linear process where we start with a request as input and return a response as output, instead we have a Request-Response-Cycle allowing to run multiple request handler sequentially with all the data request and response available for modification. We break the cycle by stopping it, i.e. by omitting the call to the next function or sending a response back to the client.
+
+To get a better understating about these concepts, we write our own middleware function used to log requests from the client, for that define a constant logRequest of type RequestHandler and assign it a function with three parameters representing the request, response object and the next function. Then log the request method such as GET or POST to an end point such as "/products". also Make sure to import RequestHandler from express.
+
+
+```TypeScript
+import { RequestHandler } from "express";
+
+const logRequest : RequestHandler = (req, res, next) => {
+    console.log(req.method + " Request: " + req.url);
+};
+```
+
+In order to test our logRequest handler, add it to the list of request handlers of the GET method to the end point "/products". Also add it in front of the urlParser; to the list of request handlers of the POST method to the end point "/products".
+
+```TypeScript
+app.route("/products").get(logRequest, (req, res, next) => {
+    res.send("Get all products.");
+});
+
+app.route("/products").post(logRequest, urlParser, (req, res, next) => {
+    res.send("Post new product.");
+    console.log(req.body);
+});
+```
+Then go to POSTMAN and check that we don't get a message back anymore. On the other hand, the logging of the requests to the console worked. Obviously, our logRequest handler was executed but not the subsequent handlers on the list. The reason is that we forgot to call the next function within the logRequst handler and that breaks the Request-Response-Cycle. To fix that issue, add a call to next within the handler.
+
+```TypeScript
+const logRequest : RequestHandler = (req, res, next) => {
+    console.log(req.method + " Request: " + req.url);
+    next();
+});
+```

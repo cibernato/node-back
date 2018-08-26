@@ -1,8 +1,14 @@
 import * as express from  "express"
+import { RequestHandler } from "express";
 const app = express();
 
 import * as bodyparser from "body-parser"
 const urlParser = bodyparser.urlencoded({extended: false});
+
+const logRequest : RequestHandler = (req, res, next) => {
+    console.log(req.method + " Request: " + req.url);
+    next();
+};
 
 /**
  * GET
@@ -11,7 +17,7 @@ app.route("/").get((req, res, next) => {
     res.send("Home");
 });
 
-app.route("/products").get((req, res, next) => {
+app.route("/products").get(logRequest, (req, res, next) => {
     res.send("Get all products.");
 });
 
@@ -26,7 +32,7 @@ app.route("/products/:productID").get((req, res, next) => {
 /**
  * POST
  */
-app.route("/products").post(urlParser, (req, res, next) => {
+app.route("/products").post(logRequest, urlParser, (req, res, next) => {
     res.send("Post new product.");
     console.log(req.body);
 });
