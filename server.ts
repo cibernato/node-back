@@ -4,6 +4,7 @@ const app = express();
 
 import * as bodyparser from "body-parser"
 const urlParser = bodyparser.urlencoded({extended: false});
+const jsonParser = bodyparser.json();
 
 const logRequest : RequestHandler = (req, res, next) => {
     console.log(req.method + " Request: " + req.url);
@@ -21,6 +22,12 @@ const user : User = {
     firstname : "Robert",
     lastname : "Jones"
 }
+
+const userJSON = JSON.stringify(user);
+console.log(userJSON);
+
+const parsedUser = JSON.parse(userJSON) as User;
+console.log(parsedUser);
 
 /**
  * GET
@@ -45,7 +52,7 @@ app.route("/products/:productID").get((req, res, next) => {
 /**
  * POST
  */
-app.route("/products").post(urlParser, (req, res, next) => {
+app.route("/products").post(jsonParser, (req, res, next) => {
     res.send("Post new product.");
     console.log(req.body);
 });
@@ -53,7 +60,7 @@ app.route("/products").post(urlParser, (req, res, next) => {
 /**
  * PATCH
  */
-app.route("/products/:productID").patch(urlParser, (req, res, next) => {
+app.route("/products/:productID").patch(jsonParser, (req, res, next) => {
     res.send("Update product with ID: " + req.params.productID);
     console.log(req.body);
 });

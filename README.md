@@ -99,6 +99,8 @@ app.route("/products/:productID").get((req, res, next) => {
 
 Besides get, express support more than 20 other routing methods. The most important ones are the four methods: GET, POST, PATCH and DELETE to retrieve, send, update and delete data. By submitting a web request from the browser's address bar, we always send a get request, we can't send other requests by this way. For testing the other routing methods, we use a tool called POSTMAN. To install POSTMAN go to the [website](https://www.getpostman.com/), download it and run through the setup steps.
 
+On the right side, you can see the request builder with a dropdown for the various routing methods, and next to it an input field for the requested URL.
+
 By a post request, data is sent from the client to the server. A Typical use case is a web form. After a user fill out a form and press send, the entered data is sent in a body of a post request to the server. we can simulate that by POSTMAN. Open POSTMAN and do the following:
 
 * Select the body tab below the request bar and there choose the second option; x-www-form-urlencoded.
@@ -259,3 +261,59 @@ With that key we can get access to the user object within the template. In order
 ```HTML
 <h1>Welcome <%= user.firstname %>!</h1>
 ```
+
+#### Client-side Rendering
+
+When opting for Client-side Rendering, Front-end frameworks like Angular or React take over the responsibility to render the HTML files. So, all what we need to do on the server is to send the raw data requested by the client.
+
+Two different formats for exchanging raw data in this context; XML and JSON. Compared to XML, JSON is more practical, especially when used with JavaScript or TypeScript. JSON which stands for JavaScript Object Notation looks in fact quite similar to a JavaScript or TypeScript object. Take a look at the file tsconfig.json and observe that the difference to the Object Notation is that the property names as well as the primitive values are set within quotation marks. Moreover, objects as members are resolved by adding the content within curly braces as in the case of the property "compilerOptions". And arrays are written as usual by listing the elements within square brackets as in the case of the property "files".
+
+TypeScript’s object can be converted easily to JSON and vice versa. For example, we could create a JSON expressed as a string by applying the JSON’s stringy method on the user object.
+
+```TypeScript
+const userJSON = JSON.stringify(user);
+console.log(userJSON); // Check that by printing userJSON to the console.
+```
+
+For the opposite direction, create a constant parsedUser by the JSON's pares method on the JSON string userJSON and cast it as a User object.
+
+```TypeScript
+const parsedUser = JSON.parse(userJSON) as User;
+console.log(parsedUser) // Observe that the parsedUser is equal to the original user object
+```
+
+Now, Let's replace urlencoded data by JSON data as format for the data sent by the client. As a first step, create a JSON parser by calling the JSON method on bodyParser.
+
+```TypeScript
+const jsonParser = bodyparser.json();
+```
+
+Then replace urlParser by jsonParser in all routes.
+
+```TypeScript
+/**
+ * POST
+ */
+app.route("/products").post(jsonParser, (req, res, next) => {
+    res.send("Post new product.");
+    console.log(req.body);
+});
+
+/**
+ * PATCH
+ */
+app.route("/products/:productID").patch(jsonParser, (req, res, next) => {
+    res.send("Update product with ID: " + req.params.productID);
+    console.log(req.body);
+});
+```
+
+After that, switch over to POSTMAN, create a post request to end point "/products", but now choose raw option as body format, and select JSON in the dropdown list. Then insert some JSON data.
+
+```JSON
+{
+    "productName" : "MacBook Pro 2015"
+}
+```
+
+After sending the request, verify in VSCode that the data still provided correctly in the body property of the request object.
