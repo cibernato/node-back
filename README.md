@@ -317,3 +317,27 @@ After that, switch over to POSTMAN, create a post request to end point "/product
 ```
 
 After sending the request, verify in VSCode that the data still provided correctly in the body property of the request object.
+
+### Code Refactoring (Code Organization)
+
+You may observe, even in a simple example that the main file server.ts has already become quite long and loaded with different tasks. To reorganize the code, we could move routing part to a separate module. For that, create a folder "api" under root and in that folder create a file "api.ts". Now move all the code related to routing to this new file. There we could export a function which initializes all the routes. let’s call the function setupRoutes and provide the parameter app of type express as input. Move all routes defenetions to this function. Also add Express to the list of imports from express at the top of the file.
+
+```TypeScript
+import { RequestHandler, Express } from "express";
+
+export function setupRoutes(app : Express) {
+
+    // Move all routes defenetions to this function
+
+}
+```
+
+Now, in the main file server.ts, first import setupRoutes from the api file. And call the function with app as parameter.
+
+```TypeScript
+import { setupRoutes } from './api/api';
+
+setupRoutes(app);
+```
+
+Check now in POSTMAN. Of course, we could go on to make our code more modular by placing each request handler in its own module.
