@@ -1,6 +1,6 @@
 # TypeScript Applications
 
-* Run `npm start` for TypeScript execution and REPL (read–eval–print loop).
+* Run `npm start` and open the browser, then submit your request to http://localhost:8091.
 
 ## Backend with Node/Express (I)
 TypeScript is the ideal language for full-stack web development as it can be used on a server side as well as on a client side. We start with the server-side where we will become familiar with one of the most popular backend options; Node combined with Express.
@@ -43,15 +43,9 @@ the start of the server to the console.
 app.listen(8091, "localhost", () => console.log("Server started..."));
 ```
 
-Now if you `npm start` and open the browser, and then submit your request to http://localhost:8091, the 
-message sent back from the browser is "Cannot GET" followed by a slash "/", it shows that the server is 
-running but no get route was defined to handle the request to the home path represented by the empty slash. 
+Now if you `npm start` and open the browser, and then submit your request to http://localhost:8091, the message sent back from the browser is "Cannot GET" followed by a slash "/", it shows that the server is running but no get route was defined to handle the request to the home path represented by the empty slash. 
 
-Before writing a couple of routs to respond to user request, lets improve the testing process which is quiet 
-tedious at the moment, every time we change the code and want to check if it works we have to save the file,
-stop the server, restart it and switch over to the browser. To simplify that, we use a module called 
-nodemon which we install as development dependency. nodemon allows us to restart script automaticlly when 
-files in the specified directory change.
+Before writing a couple of routs to respond to user request, lets improve the testing process which is quiet tedious at the moment, every time we change the code and want to check if it works we have to save the file, stop the server, restart it and switch over to the browser. To simplify that, we use a module called nodemon which we install as development dependency. nodemon allows us to restart script automaticlly when files in the specified directory change.
 
 * Install nodemon as a development dependency with `npm install nodemon -D`
 
