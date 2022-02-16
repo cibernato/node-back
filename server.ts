@@ -1,7 +1,4 @@
-import * as express from  "express"
-import { setupRoutes } from './api/api';
-const app = express();
+require('dotenv').config()
+const app = require("./app")
 
-setupRoutes(app);
-
-app.listen(8091, "localhost", () => console.log("Server started..."));
+app.listen(process.env.PORT, () => console.log("Server started... "+process.env.PORT));
