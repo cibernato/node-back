@@ -10,7 +10,6 @@ node{
 
     stage("Build") {
         sh 'npm i'
-        sh 'whoami'
     }
 
     stage("Test") {
@@ -24,11 +23,9 @@ node{
         sh 'docker tag ' + NAME_IMGDOCKER+':' + currentBuild.id + ' ' + ECRREPO + NAME_IMGDOCKER + ':latest'
     }
     stage("Terraform variables"){
-        withCredentials([usernamePassword(credentialsId: 'aws-access-key', variable: 'access')]) {
-            withCredentials([usernamePassword(credentialsId: 'aws-secret-key', variable: 'secret')]) {
-              sh "sed 's/ACCESS/${access}/g' terraform/terraform.tfvars"
-              sh "sed 's/SECRET/${secret}/g' terraform/terraform.tfvars"
-            }
+        withCredentials([string(credentialsId: 'aws-access-key', variable: 'access'), string(credentialsId: 'aws-secret-key', variable: 'secret')]) {
+          sh "sed 's/ACCESS/${access}/g' terraform/terraform.tfvars"
+          sh "sed 's/SECRET/${secret}/g' terraform/terraform.tfvars"
         }
 
     }
