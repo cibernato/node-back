@@ -74,12 +74,12 @@ resource "aws_ecs_service" "aws-ecs-service" {
   task_definition      = "${aws_ecs_task_definition.aws-ecs-task.family}:${max(aws_ecs_task_definition.aws-ecs-task.revision, data.aws_ecs_task_definition.main.revision)}"
   launch_type          = "FARGATE"
   scheduling_strategy  = "REPLICA"
-  desired_count        = 1
+  desired_count        = 2
   platform_version     = "1.3.0"
   force_new_deployment = true
 
   network_configuration {
-    subnets          = aws_subnet.private.*.id
+    subnets          = [aws_subnet.private.*.id, aws_subnet.public.*.id]
     assign_public_ip = false
     security_groups  = [
       aws_security_group.service_security_group.id,
