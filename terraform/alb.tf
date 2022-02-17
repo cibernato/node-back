@@ -120,18 +120,27 @@ resource "aws_lb_listener" "listener-https" {
   }
 }
 
-data "aws_route53_zone" "dns" {
-  provider = aws.region-master
-  name     = "pruebabnaco.click"
-}
 resource "aws_route53_record" "webservers" {
-  provider = aws.region-master
-  zone_id  = data.aws_route53_zone.dns.zone_id
+  zone_id  = aws_alb.application_load_balancer.zone_id
   name     = "master.pruebabnaco.click"
-  type     = "A"
-  alias {
-    name                   = aws_alb.application_load_balancer.dns_name
-    zone_id                = aws_alb.application_load_balancer.zone_id
-    evaluate_target_health = true
+  type     = "CNAME"
+  ttl     = "300"
+  records = [aws_alb.application_load_balancer.dns_name]
+}
+
+
+resource "aws_lb_listener_rule" "lb-rule-autotest" {
+  listener_arn = aws_alb.application_load_balancer.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.target_group.arn
+  }
+
+  condition {
+    host_header {
+      values = "master.pruebabnaco.click"
+    }
   }
 }
