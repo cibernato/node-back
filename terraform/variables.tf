@@ -14,6 +14,11 @@ variable "aws_key_pair_name" {
   description = "AWS Key Pair Name"
 }
 
+variable "env_name" {
+  type        = string
+  description = "Domain name"
+}
+
 # variable "aws_key_pair_file" {
 #   type = string
 #   description = "AWS Key Pair File"

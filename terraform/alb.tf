@@ -108,10 +108,18 @@ resource "aws_lb_listener" "listener-https" {
   }
 }
 
+resource "aws_route53_record" "webservers" {
+  zone_id = "Z09691671NRQTNXKFPMAA"
+  name    = var.env_name
+  type    = "CNAME"
+  ttl     = "300"
+  records = [aws_alb.application_load_balancer.dns_name]
+}
 
 resource "aws_lb_listener_rule" "lb-rule-autotest" {
   listener_arn = aws_lb_listener.listener-https.arn
   priority     = 100
+  depends_on = [aws_route53_record.webservers]
 
   action {
     type             = "forward"
@@ -120,15 +128,9 @@ resource "aws_lb_listener_rule" "lb-rule-autotest" {
 
   condition {
     host_header {
-      values = ["master.pruebabnaco.click"]
+      values = [aws_route53_record.webservers.name]
     }
   }
 }
 
-resource "aws_route53_record" "webservers" {
-  zone_id  = "Z09691671NRQTNXKFPMAA"
-  name     = "master"
-  type     = "CNAME"
-  ttl     = "300"
-  records = [aws_alb.application_load_balancer.dns_name]
-}
+
