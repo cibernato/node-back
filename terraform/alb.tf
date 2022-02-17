@@ -126,7 +126,7 @@ resource "aws_lb_listener_rule" "lb-rule-autotest" {
 }
 
 resource "aws_route53_record" "webservers" {
-  zone_id  = aws_alb.application_load_balancer.zone_id
+  zone_id  = "Z09691671NRQTNXKFPMAA"
   name     = "master.pruebabnaco.click"
   type     = "CNAME"
   ttl     = "300"
