@@ -29,8 +29,8 @@ resource "aws_security_group" "load_balancer_security_group" {
     ipv6_cidr_blocks = ["::/0"]
   }
   ingress {
-    from_port        = 8080
-    to_port          = 8080
+    from_port        = 8091
+    to_port          = 8091
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
@@ -51,7 +51,7 @@ resource "aws_security_group" "load_balancer_security_group" {
 
 resource "aws_lb_target_group" "target_group" {
   name        = "${var.app_name}-${var.app_environment}-tg"
-  port        = 8080
+  port        = 8091
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = aws_vpc.aws-vpc.id
@@ -130,7 +130,7 @@ resource "aws_route53_record" "webservers" {
 
 
 resource "aws_lb_listener_rule" "lb-rule-autotest" {
-  listener_arn = aws_alb.application_load_balancer.arn
+  listener_arn = aws_lb_listener.listener-https.arn
   priority     = 100
 
   action {

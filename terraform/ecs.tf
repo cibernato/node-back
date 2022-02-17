@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "portMappings": [
         {
           "containerPort": 8091,
-          "hostPort": 8080
+          "hostPort": 8091
         }
       ],
       "cpu": 256,
