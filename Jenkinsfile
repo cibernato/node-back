@@ -10,6 +10,7 @@ node{
 
     stage("Build") {
         sh 'npm i'
+        sh 'whoami'
     }
 
     stage("Test") {
