@@ -2,6 +2,7 @@ aws_region        = "us-east-2"
 aws_access_key    = "ACCESS"
 aws_secret_key    = "SECRET"
 env_name          = "ENV_NAME"
+build_id          = "BUILD_ID"
 aws_key_pair_name = "testaws"
 
 availability_zones = ["us-east-2a", "us-east-2b"]

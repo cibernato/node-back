@@ -51,18 +51,19 @@ resource "aws_security_group" "load_balancer_security_group" {
 
 resource "aws_lb_target_group" "target_group" {
   name        = "${var.app_name}-${var.app_environment}-tg"
-  port        = 8091
+  port        = 80
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = aws_vpc.aws-vpc.id
   depends_on  = [aws_alb.application_load_balancer]
+
   health_check {
     healthy_threshold   = "3"
     interval            = "300"
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = "3"
-    path                = "/DevOps"
+    path                = "/token"
     unhealthy_threshold = "2"
   }
 
@@ -70,6 +71,10 @@ resource "aws_lb_target_group" "target_group" {
     Name        = "${var.app_name}-lb-tg"
     Environment = var.app_environment
   }
+}
+resource "aws_lb_target_group_attachment" "target_group_attachment" {
+ target_group_arn = aws_lb_target_group.target_group.arn
+  target_id = aws_e
 }
 
 resource "aws_lb_listener" "listener" {
@@ -119,7 +124,7 @@ resource "aws_route53_record" "webservers" {
 resource "aws_lb_listener_rule" "lb-rule-autotest" {
   listener_arn = aws_lb_listener.listener-https.arn
   priority     = 100
-  depends_on = [aws_route53_record.webservers]
+  depends_on   = [aws_route53_record.webservers]
 
   action {
     type             = "forward"

@@ -28,6 +28,10 @@ variable "aws_region" {
   type        = string
   description = "AWS Region"
 }
+variable "build_id" {
+  type        = number
+  description = "Build id jenkins"
+}
 
 variable "aws_cloudwatch_retention_in_days" {
   type        = number
