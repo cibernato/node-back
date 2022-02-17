@@ -92,25 +92,13 @@ resource "aws_lb_listener" "listener" {
     }
   }
 }
-resource "aws_acm_certificate" "cert" {
-  domain_name       = "pruebabanco.click"
-  validation_method = "DNS"
 
-  tags = {
-    Environment = "test"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 resource "aws_lb_listener" "listener-https" {
   load_balancer_arn = aws_alb.application_load_balancer.id
   port              = "443"
   protocol          = "HTTPS"
-  certificate_arn   = aws_acm_certificate.cert.arn
-  depends_on        = [aws_acm_certificate.cert]
+  certificate_arn   = "arn:aws:acm:us-east-2:234596161224:certificate/8e646e82-202f-4550-b8f4-6c9adf78ad0a"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
 
 
@@ -118,14 +106,6 @@ resource "aws_lb_listener" "listener-https" {
     target_group_arn = aws_lb_target_group.target_group.id
     type             = "forward"
   }
-}
-
-resource "aws_route53_record" "webservers" {
-  zone_id  = aws_alb.application_load_balancer.zone_id
-  name     = "master.pruebabnaco.click"
-  type     = "CNAME"
-  ttl     = "300"
-  records = [aws_alb.application_load_balancer.dns_name]
 }
 
 
@@ -143,4 +123,12 @@ resource "aws_lb_listener_rule" "lb-rule-autotest" {
       values = ["master.pruebabnaco.click"]
     }
   }
+}
+
+resource "aws_route53_record" "webservers" {
+  zone_id  = aws_alb.application_load_balancer.zone_id
+  name     = "master.pruebabnaco.click"
+  type     = "CNAME"
+  ttl     = "300"
+  records = [aws_alb.application_load_balancer.dns_name]
 }
