@@ -110,11 +110,28 @@ resource "aws_lb_listener" "listener-https" {
   port              = "443"
   protocol          = "HTTPS"
   certificate_arn   = aws_acm_certificate.cert.arn
+  depends_on        = [aws_acm_certificate.cert]
   ssl_policy        = "ELBSecurityPolicy-2016-08"
 
 
   default_action {
     target_group_arn = aws_lb_target_group.target_group.id
     type             = "forward"
+  }
+}
+
+data "aws_route53_zone" "dns" {
+  provider = aws.region-master
+  name     = "pruebabnaco.click"
+}
+resource "aws_route53_record" "webservers" {
+  provider = aws.region-master
+  zone_id  = data.aws_route53_zone.dns.zone_id
+  name     = "master.pruebabnaco.click"
+  type     = "A"
+  alias {
+    name                   = aws_alb.application_load_balancer.dns_name
+    zone_id                = aws_alb.application_load_balancer.zone_id
+    evaluate_target_health = true
   }
 }
