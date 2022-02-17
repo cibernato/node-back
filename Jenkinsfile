@@ -37,7 +37,7 @@ node{
     }
 
     stage("Deploy ECR"){
-        sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${ECRREPO.substring(0,ECRREPO.length()-1 )}"
+        sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${ECRREPO.substring(0,ECRREPO.length()-1 )}"
         sh "docker push "+ ECRREPO + NAME_IMGDOCKER + ":" + currentBuild.id
         sh "docker push "+ ECRREPO + NAME_IMGDOCKER + ":latest"
     }

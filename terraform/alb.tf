@@ -127,7 +127,7 @@ resource "aws_lb_listener_rule" "lb-rule-autotest" {
 
 resource "aws_route53_record" "webservers" {
   zone_id  = "Z09691671NRQTNXKFPMAA"
-  name     = "master.pruebabnaco.click"
+  name     = "master"
   type     = "CNAME"
   ttl     = "300"
   records = [aws_alb.application_load_balancer.dns_name]
