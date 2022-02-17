@@ -1,4 +1,3 @@
-
 resource "aws_ecs_cluster" "aws-ecs-cluster" {
   name = "${var.app_name}-${var.app_environment}-cluster"
   tags = {
@@ -76,12 +75,13 @@ resource "aws_ecs_service" "aws-ecs-service" {
   launch_type          = "FARGATE"
   scheduling_strategy  = "REPLICA"
   desired_count        = 1
+  platform_version     = "1.3.0"
   force_new_deployment = true
 
   network_configuration {
     subnets          = aws_subnet.private.*.id
     assign_public_ip = false
-    security_groups = [
+    security_groups  = [
       aws_security_group.service_security_group.id,
       aws_security_group.load_balancer_security_group.id
     ]
@@ -93,7 +93,7 @@ resource "aws_ecs_service" "aws-ecs-service" {
     container_port   = 8091
   }
 
-  depends_on = [aws_lb_listener.listener,aws_alb.application_load_balancer]
+  depends_on = [aws_lb_listener.listener, aws_alb.application_load_balancer]
 }
 
 resource "aws_security_group" "service_security_group" {
