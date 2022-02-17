@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "target_group" {
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = aws_vpc.aws-vpc.id
-
+  depends_on  = [aws_alb.application_load_balancer]
   health_check {
     healthy_threshold   = "3"
     interval            = "300"
@@ -92,13 +92,25 @@ resource "aws_lb_listener" "listener" {
     }
   }
 }
+resource "aws_acm_certificate" "cert" {
+  domain_name       = "pruebabanco.click"
+  validation_method = "DNS"
+
+  tags = {
+    Environment = "test"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 resource "aws_lb_listener" "listener-https" {
   load_balancer_arn = aws_alb.application_load_balancer.id
   port              = "443"
   protocol          = "HTTPS"
-
-  ssl_policy      = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.cert.arn
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
 
 
   default_action {
