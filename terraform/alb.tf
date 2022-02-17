@@ -72,10 +72,6 @@ resource "aws_lb_target_group" "target_group" {
     Environment = var.app_environment
   }
 }
-resource "aws_lb_target_group_attachment" "target_group_attachment" {
- target_group_arn = aws_lb_target_group.target_group.arn
-  target_id = aws_e
-}
 
 resource "aws_lb_listener" "listener" {
   load_balancer_arn = aws_alb.application_load_balancer.id
