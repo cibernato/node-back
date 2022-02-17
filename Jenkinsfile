@@ -1,5 +1,5 @@
 node{
-    def NAME_IMGDOCKER = "node-backend"
+    def NAME_IMGDOCKER = "node-backend-staging-ecr"
     def sshIdCred = "test ssh"
     def awscredentials = "ecr:us-east-2:aws"
     def ECRREPO = "234596161224.dkr.ecr.us-east-2.amazonaws.com/"
