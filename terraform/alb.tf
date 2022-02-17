@@ -140,7 +140,7 @@ resource "aws_lb_listener_rule" "lb-rule-autotest" {
 
   condition {
     host_header {
-      values = "master.pruebabnaco.click"
+      values = ["master.pruebabnaco.click"]
     }
   }
 }
