@@ -2,7 +2,7 @@
 resource "aws_internet_gateway" "aws-igw" {
   vpc_id = aws_vpc.aws-vpc.id
   tags = {
-    Name        = "${var.app_name}-igw"
+    Name        = "${var.app_name}-${var.env_name}-igw"
     Environment = var.env_name
   }
 
@@ -15,7 +15,7 @@ resource "aws_subnet" "private" {
   availability_zone = element(var.availability_zones, count.index)
 
   tags = {
-    Name        = "${var.app_name}-private-subnet-${count.index + 1}"
+    Name        = "${var.app_name}-${var.env_name}-private-subnet-${count.index + 1}"
     Environment = var.env_name
   }
 }
@@ -28,7 +28,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name        = "${var.app_name}-public-subnet-${count.index + 1}"
+    Name        = "${var.app_name}-${var.env_name}-public-subnet-${count.index + 1}"
     Environment = var.env_name
   }
 }
@@ -37,7 +37,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.aws-vpc.id
 
   tags = {
-    Name        = "${var.app_name}-routing-table-public"
+    Name        = "${var.app_name}-${var.env_name}-routing-table-public"
     Environment = var.env_name
   }
 }
@@ -55,11 +55,10 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_vpc_endpoint" "ec2" {
-  count             = length(var.private_subnets)
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ec2"
   vpc_endpoint_type = "Interface"
-  subnet_ids = [element(aws_subnet.private.*.id, count.index)]
+  subnet_ids = [for o in aws_subnet.private : o.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -70,11 +69,10 @@ resource "aws_vpc_endpoint" "ec2" {
 }
 
 resource "aws_vpc_endpoint" "ecr_dkr" {
-  count             = length(var.private_subnets)
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ecr.dkr"
   vpc_endpoint_type = "Interface"
-  subnet_ids = [element(aws_subnet.private.*.id, count.index)]
+  subnet_ids = [for o in aws_subnet.private : o.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -85,11 +83,10 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
 }
 
 resource "aws_vpc_endpoint" "ecr_api" {
-  count             = length(var.private_subnets)
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ecr.api"
   vpc_endpoint_type = "Interface"
-  subnet_ids = [element(aws_subnet.private.*.id, count.index)]
+  subnet_ids = [for o in aws_subnet.private : o.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -100,11 +97,10 @@ resource "aws_vpc_endpoint" "ecr_api" {
 }
 
 resource "aws_vpc_endpoint" "logs" {
-  count             = length(var.private_subnets)
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.logs"
   vpc_endpoint_type = "Interface"
-  subnet_ids = [element(aws_subnet.private.*.id, count.index)]
+  subnet_ids = [for o in aws_subnet.private : o.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -115,11 +111,10 @@ resource "aws_vpc_endpoint" "logs" {
 }
 
 resource "aws_vpc_endpoint" "ssm" {
-  count             = length(var.private_subnets)
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ssm"
   vpc_endpoint_type = "Interface"
-  subnet_ids = [element(aws_subnet.private.*.id, count.index)]
+  subnet_ids = [for o in aws_subnet.private : o.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
