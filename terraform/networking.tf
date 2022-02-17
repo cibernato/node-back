@@ -128,13 +128,3 @@ resource "aws_vpc_endpoint" "ssm" {
 
   private_dns_enabled = true
 }
-
-data "aws_vpc_endpoint" "s3" {
-  vpc_id       = aws_vpc.aws-vpc.id
-  service_name = "com.amazonaws.${var.aws_region}.s3"
-}
-
-resource "aws_vpc_endpoint_route_table_association" "private_s3" {
-  vpc_endpoint_id = data.aws_vpc_endpoint.s3.id
-  route_table_id  = aws_route_table.public.id
-}
