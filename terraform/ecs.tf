@@ -41,7 +41,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       },
       "portMappings": [
         {
-          "containerPort": 8080,
+          "containerPort": 8091,
           "hostPort": 8080
         }
       ],
@@ -90,10 +90,10 @@ resource "aws_ecs_service" "aws-ecs-service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group.arn
     container_name   = "${var.app_name}-${var.app_environment}-container"
-    container_port   = 8080
+    container_port   = 8091
   }
 
-  depends_on = [aws_lb_listener.listener]
+  depends_on = [aws_lb_listener.listener,aws_alb.application_load_balancer]
 }
 
 resource "aws_security_group" "service_security_group" {
