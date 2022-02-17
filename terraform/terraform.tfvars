@@ -10,4 +10,4 @@ public_subnets     = ["10.10.100.0/24", "10.10.101.0/24"]
 private_subnets    = ["10.10.0.0/24", "10.10.1.0/24"]
 
 app_name        = "node-backend"
-app_environment = "staging"
+

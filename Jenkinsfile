@@ -1,6 +1,5 @@
 node{
-    def NAME_IMGDOCKER = "node-backend-staging-ecr"
-    def sshIdCred = "test ssh"
+    def NAME_IMGDOCKER = "node-backend-${env.BRANCH_NAME}-ecr"
     def awscredentials = "ecr:us-east-2:aws"
     def ECRREPO = "234596161224.dkr.ecr.us-east-2.amazonaws.com/"
 
@@ -25,6 +24,7 @@ node{
     stage("Terraform variables"){
         withCredentials([string(credentialsId: 'aws-access-key', variable: 'access'), string(credentialsId: 'aws-secret-key', variable: 'secret')]) {
           sh "sed -i 's#ACCESS#${access}#g;s#ENV_NAME#${env.BRANCH_NAME}#g;s#BUILD_ID#${currentBuild.id}#g;s#SECRET#${secret}#g' terraform/terraform.tfvars"
+          sh "sed -i 's#ENV_NAME#${env.BRANCH_NAME}#g;' terraform/main.tf"
         }
 
     }

@@ -1,17 +1,17 @@
 resource "aws_ecs_cluster" "aws-ecs-cluster" {
-  name = "${var.app_name}-${var.app_environment}-cluster"
+  name = "${var.app_name}-${var.env_name}-cluster"
   tags = {
     Name        = "${var.app_name}-ecs"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 
 resource "aws_cloudwatch_log_group" "log-group" {
-  name = "${var.app_name}-${var.app_environment}-logs"
+  name = "${var.app_name}-${var.env_name}-logs"
 
   tags = {
     Application = var.app_name
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 
@@ -25,7 +25,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
   container_definitions = <<DEFINITION
   [
     {
-      "name": "${var.app_name}-${var.app_environment}-container",
+      "name": "${var.app_name}-${var.env_name}-container",
       "image": "${aws_ecr_repository.aws-ecr.repository_url}:${var.build_id}",
       "entryPoint": [],
 
@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
         "options": {
           "awslogs-group": "${aws_cloudwatch_log_group.log-group.id}",
           "awslogs-region": "${var.aws_region}",
-          "awslogs-stream-prefix": "${var.app_name}-${var.app_environment}"
+          "awslogs-stream-prefix": "${var.app_name}-${var.env_name}"
         }
       },
       "portMappings": [
@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
 
   tags = {
     Name        = "${var.app_name}-ecs-td"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 
@@ -69,7 +69,7 @@ data "aws_ecs_task_definition" "main" {
 }
 
 resource "aws_ecs_service" "aws-ecs-service" {
-  name                 = "${var.app_name}-${var.app_environment}-ecs-service"
+  name                 = "${var.app_name}-${var.env_name}-ecs-service"
   cluster              = aws_ecs_cluster.aws-ecs-cluster.id
   task_definition      = "${aws_ecs_task_definition.aws-ecs-task.family}:${max(aws_ecs_task_definition.aws-ecs-task.revision, data.aws_ecs_task_definition.main.revision)}"
   launch_type          = "FARGATE"
@@ -89,7 +89,7 @@ resource "aws_ecs_service" "aws-ecs-service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group.arn
-    container_name   = "${var.app_name}-${var.app_environment}-container"
+    container_name   = "${var.app_name}-${var.env_name}-container"
     container_port   = 8091
   }
 
@@ -116,7 +116,7 @@ resource "aws_security_group" "service_security_group" {
 
   tags = {
     Name        = "${var.app_name}-service-sg"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 

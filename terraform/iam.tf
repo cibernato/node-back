@@ -4,7 +4,7 @@ resource "aws_iam_role" "ecsTaskExecutionRole" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
   tags = {
     Name        = "${var.app_name}-iam-role"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 

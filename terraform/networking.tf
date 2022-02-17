@@ -3,7 +3,7 @@ resource "aws_internet_gateway" "aws-igw" {
   vpc_id = aws_vpc.aws-vpc.id
   tags = {
     Name        = "${var.app_name}-igw"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 
 }
@@ -16,7 +16,7 @@ resource "aws_subnet" "private" {
 
   tags = {
     Name        = "${var.app_name}-private-subnet-${count.index + 1}"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 
@@ -29,7 +29,7 @@ resource "aws_subnet" "public" {
 
   tags = {
     Name        = "${var.app_name}-public-subnet-${count.index + 1}"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 
@@ -38,7 +38,7 @@ resource "aws_route_table" "public" {
 
   tags = {
     Name        = "${var.app_name}-routing-table-public"
-    Environment = var.app_environment
+    Environment = var.env_name
   }
 }
 
@@ -52,4 +52,69 @@ resource "aws_route_table_association" "public" {
   count          = length(var.public_subnets)
   subnet_id      = element(aws_subnet.public.*.id, count.index)
   route_table_id = aws_route_table.public.id
+}
+
+resource "aws_vpc_endpoint" "ec2" {
+  vpc_id            = aws_vpc.aws-vpc.id
+  service_name      = "com.amazonaws.${var.aws_region}.ec2"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.service_security_group.id,
+    aws_security_group.load_balancer_security_group.id
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id            = aws_vpc.aws-vpc.id
+  service_name      = "com.amazonaws.${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.service_security_group.id,
+    aws_security_group.load_balancer_security_group.id
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id            = aws_vpc.aws-vpc.id
+  service_name      = "com.amazonaws.${var.aws_region}.ecr.api"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.service_security_group.id,
+    aws_security_group.load_balancer_security_group.id
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "logs" {
+  vpc_id            = aws_vpc.aws-vpc.id
+  service_name      = "com.amazonaws.${var.aws_region}.logs"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.service_security_group.id,
+    aws_security_group.load_balancer_security_group.id
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id            = aws_vpc.aws-vpc.id
+  service_name      = "com.amazonaws.${var.aws_region}.ssm"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.service_security_group.id,
+    aws_security_group.load_balancer_security_group.id
+  ]
+
+  private_dns_enabled = true
 }
