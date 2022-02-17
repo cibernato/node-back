@@ -24,8 +24,7 @@ node{
     }
     stage("Terraform variables"){
         withCredentials([string(credentialsId: 'aws-access-key', variable: 'access'), string(credentialsId: 'aws-secret-key', variable: 'secret')]) {
-          sh "sed -i 's//"ACCESS/"//"${access}/"/g' terraform/terraform.tfvars"
-          sh "sed -i 's//"SECRET/"//"${secret}/"/g' terraform/terraform.tfvars"
+          sh "sed -i 's/ACCESS/${access}/g;s/SECRET/${secret}/g' terraform/terraform.tfvars"
         }
 
     }
