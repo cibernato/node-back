@@ -128,7 +128,7 @@ resource "aws_lb_listener_rule" "lb-rule-autotest" {
 
   condition {
     host_header {
-      values = [aws_route53_record.webservers.name]
+      values = ["${aws_route53_record.webservers.name}.pruebabanco.click"]
     }
   }
 }
