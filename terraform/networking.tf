@@ -58,6 +58,7 @@ resource "aws_vpc_endpoint" "ec2" {
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ec2"
   vpc_endpoint_type = "Interface"
+  subnet_ids = [aws_subnet.private.*.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -71,6 +72,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ecr.dkr"
   vpc_endpoint_type = "Interface"
+  subnet_ids = [aws_subnet.private.*.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -84,6 +86,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ecr.api"
   vpc_endpoint_type = "Interface"
+  subnet_ids = [aws_subnet.private.*.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -97,6 +100,7 @@ resource "aws_vpc_endpoint" "logs" {
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.logs"
   vpc_endpoint_type = "Interface"
+  subnet_ids = [aws_subnet.private.*.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -110,6 +114,7 @@ resource "aws_vpc_endpoint" "ssm" {
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.ssm"
   vpc_endpoint_type = "Interface"
+  subnet_ids = [aws_subnet.private.*.id]
 
   security_group_ids = [
     aws_security_group.service_security_group.id,
@@ -117,4 +122,14 @@ resource "aws_vpc_endpoint" "ssm" {
   ]
 
   private_dns_enabled = true
+}
+
+data "aws_vpc_endpoint" "s3" {
+  vpc_id       = aws_vpc.aws-vpc.id
+  service_name = "com.amazonaws.us-west-2.s3"
+}
+
+resource "aws_vpc_endpoint_route_table_association" "private_s3" {
+  vpc_endpoint_id = data.aws_vpc_endpoint.s3.id
+  route_table_id  = aws_route_table.public.id
 }
