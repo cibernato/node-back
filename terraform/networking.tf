@@ -127,6 +127,6 @@ resource "aws_vpc_endpoint" "s3_gateway" {
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.s3"
   vpc_endpoint_type = "Gateway"
-  route_table_ids = [aws_route_table.public.id]
+  route_table_ids = [aws_route_table.public.id,aws_vpc.aws-vpc.default_route_table_id]
 
 }
