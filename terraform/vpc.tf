@@ -25,7 +25,7 @@ resource "aws_network_acl_rule" "accept" {
 
 resource "aws_network_acl_rule" "deny" {
   network_acl_id = aws_network_acl.main.id
-  rule_number    = *
+  rule_number    = -1
   egress         = false
   protocol       = "-1"
   rule_action    = "deny"
@@ -80,7 +80,7 @@ resource "aws_network_acl_rule" "deny" {
 
 resource "aws_network_acl_rule" "deny" {
   network_acl_id = aws_network_acl.main.id
-  rule_number    = *
+  rule_number    = -1
   egress         = true
   protocol       = "-1"
   rule_action    = "deny"
