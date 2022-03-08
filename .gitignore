@@ -1,6 +1,9 @@
 # dependencies
 node_modules
 
+.terraform
+.terraform.*
+
 .idea
 .exe
 .env

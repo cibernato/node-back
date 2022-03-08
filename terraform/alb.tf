@@ -101,7 +101,7 @@ resource "aws_lb_listener" "listener-https" {
   protocol          = "HTTPS"
   certificate_arn   = "arn:aws:acm:us-east-2:234596161224:certificate/9c8bec22-8ff1-42af-a501-aed044a4ed1d"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-
+  depends_on        = [aws_lb_target_group.target_group]
 
   default_action {
     target_group_arn = aws_lb_target_group.target_group.id
@@ -120,7 +120,7 @@ resource "aws_route53_record" "webservers" {
 resource "aws_lb_listener_rule" "lb-rule-autotest" {
   listener_arn = aws_lb_listener.listener-https.arn
   priority     = 100
-  depends_on   = [aws_route53_record.webservers]
+  depends_on   = [aws_route53_record.webservers, aws_lb_target_group.target_group]
 
   action {
     type             = "forward"

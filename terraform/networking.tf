@@ -54,19 +54,6 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-resource "aws_vpc_endpoint" "ec2" {
-  vpc_id            = aws_vpc.aws-vpc.id
-  service_name      = "com.amazonaws.${var.aws_region}.ec2"
-  vpc_endpoint_type = "Interface"
-  subnet_ids = [for o in aws_subnet.private : o.id]
-
-  security_group_ids = [
-    aws_security_group.service_security_group.id,
-    aws_security_group.load_balancer_security_group.id
-  ]
-
-  private_dns_enabled = true
-}
 
 resource "aws_vpc_endpoint" "ecr_dkr" {
   vpc_id            = aws_vpc.aws-vpc.id
@@ -110,19 +97,6 @@ resource "aws_vpc_endpoint" "logs" {
   private_dns_enabled = true
 }
 
-resource "aws_vpc_endpoint" "ssm" {
-  vpc_id            = aws_vpc.aws-vpc.id
-  service_name      = "com.amazonaws.${var.aws_region}.ssm"
-  vpc_endpoint_type = "Interface"
-  subnet_ids = [for o in aws_subnet.private : o.id]
-
-  security_group_ids = [
-    aws_security_group.service_security_group.id,
-    aws_security_group.load_balancer_security_group.id
-  ]
-
-  private_dns_enabled = true
-}
 resource "aws_vpc_endpoint" "s3_gateway" {
   vpc_id            = aws_vpc.aws-vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.s3"
