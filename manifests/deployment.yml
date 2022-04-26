@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: kubedeploy 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubedeploy
+  template:
+    metadata:
+      labels:
+        app: kubedeploy 
+    spec:
+      containers:
+        - name: kubedeploy 
+          image: bpichinchatestregistry.azurecr.io/kubedeploy
+          ports:
+          - containerPort: 8091
